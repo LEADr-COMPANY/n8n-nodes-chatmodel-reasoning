@@ -1,5 +1,5 @@
 {
-  "name": "@bruno_groehs/n8n-nodes-chatmodel-reasoning",
+  "name": "n8n-nodes-chatmodel-reasoning",
   "version": "1.2.2",
   "description": "n8n ChatModel node with extended reasoning/thinking support for OpenRouter, DeepSeek, and any OpenAI-compatible API",
   "license": "MIT",
