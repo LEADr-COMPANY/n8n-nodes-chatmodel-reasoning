@@ -183,3 +183,19 @@ npm publish --access public
 ## License
 
 MIT
+
+## Publicação no npm pela LEADr
+
+O workflow `.github/workflows/publish.yml` publica o pacote `n8n-nodes-chatmodel-reasoning` usando OIDC, com acionamento manual na branch `main`.
+
+Configure o Trusted Publisher nas configurações desse pacote no npm:
+
+- Publisher: GitHub Actions
+- Organization or user: `LEADr-COMPANY`
+- Repository: `n8n-nodes-chatmodel-reasoning`
+- Workflow filename: `publish.yml`
+- Environment name: vazio
+- Allow npm publish: marcado
+- Allow npm dist-tag: desmarcado
+
+Para publicar uma nova versão, execute `npm version patch --no-git-tag-version` (ou `minor`/`major` conforme a mudança), faça commit e push de `package.json` e `package-lock.json` na `main`, e abra **Actions → Publicar no npm → Run workflow → main**. O workflow rejeita versões já publicadas, instala dependências, compila e executa o teste de contrato de cache antes da publicação. Não precisa de token npm em secrets.

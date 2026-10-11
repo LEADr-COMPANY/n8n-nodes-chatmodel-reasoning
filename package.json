@@ -47,5 +47,9 @@
     "@types/node": "^24.0.0",
     "n8n-workflow": "2.37.2",
     "typescript": "^5.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LEADr-COMPANY/n8n-nodes-chatmodel-reasoning.git"
   }
 }

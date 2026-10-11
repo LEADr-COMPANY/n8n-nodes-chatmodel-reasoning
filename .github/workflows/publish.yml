@@ -1,0 +1,60 @@
+name: Publicar no npm
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Obter código
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+
+      - name: Atualizar npm para suporte a OIDC
+        run: npm install --global npm@11
+
+      - name: Verificar versão disponível
+        run: |
+          node <<'NODE'
+          const { execFileSync } = require('node:child_process');
+          const { name, version } = require('./package.json');
+          const result = JSON.parse(execFileSync('npm', ['view', name, 'versions', '--json'], { encoding: 'utf8' }));
+          const versions = Array.isArray(result) ? result : [result];
+          if (versions.includes(version)) {
+            console.error(`A versão ${name}@${version} já existe no npm. Aumente a versão no package.json e no lockfile antes de publicar.`);
+            process.exit(1);
+          }
+          NODE
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Compilar
+        run: npm run build
+
+      - name: Verificar contrato de cache
+        run: node scripts/test-cache-control.js
+
+      - name: Publicar com OIDC
+        run: npm publish --access public
